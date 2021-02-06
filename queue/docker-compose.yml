@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  queue:
+    container_name: rabbitmq
+    image: rabbitmq:3.7.4-management
+    networks:
+      blog-network:
+        ipv4_address: 172.26.0.5
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+volumes:
+  rabbitmq-data:
+
+networks:
+  blog-network:
+    external: true

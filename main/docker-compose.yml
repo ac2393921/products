@@ -1,0 +1,51 @@
+version: '3.8'
+services: 
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: 'python main.py'
+    networks:
+      blog-network:
+        ipv4_address: 172.26.0.3
+      default:
+    extra_hosts:
+      - 'mainhost:172.26.0.3'
+    ports: 
+      - 5000:5000
+    expose:
+      - 5000
+    volumes: 
+      - .:/app
+    depends_on:
+      - db
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python -u consumer.py'
+    networks:
+      blog-network:
+        ipv4_address: 172.26.0.6
+      default:
+    depends_on:
+      - db
+      - backend
+  
+  db:
+    image: mariadb
+    restart: always
+    environment: 
+      MYSQL_DATABASE: main
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes: 
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 3307:3307
+
+networks:
+  blog-network:
+    external: true

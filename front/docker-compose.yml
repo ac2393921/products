@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      blog-network:
+        ipv4_address: 172.26.0.4
+    volumes:
+      - ./:/usr/src/app
+    command: "npm start"
+    ports:
+      - "3000:3000"
+
+networks:
+  blog-network:
+    external: true
